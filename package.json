@@ -33,6 +33,7 @@
     "@storybook/addon-toolbars": "^9.0.8",
     "@storybook/addon-viewport": "^9.0.8",
     "@tailwindcss/postcss": "^4.1.15",
+    "@tailwindcss/vite": "^4.1.15",
     "@tanstack/react-query": "^5.90.5",
     "@tanstack/react-query-devtools": "^5.90.2",
     "axios": "^1.12.2",

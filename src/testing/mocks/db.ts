@@ -1,44 +1,53 @@
-import { factory, primaryKey } from '@msw/data';
-import { nanoid } from 'nanoid';
+import { Collection } from '@msw/data';
+import z from 'zod';
 
-const models = {
-  user: {
-    id: primaryKey(nanoid),
-    firstName: String,
-    lastName: String,
-    email: String,
-    password: String,
-    teamId: String,
-    role: String,
-    bio: String,
-    createdAt: Date.now,
-  },
-  team: {
-    id: primaryKey(nanoid),
-    name: String,
-    description: String,
-    createdAt: Date.now,
-  },
-  discussion: {
-    id: primaryKey(nanoid),
-    title: String,
-    body: String,
-    authorId: String,
-    teamId: String,
-    createdAt: Date.now,
-  },
-  comment: {
-    id: primaryKey(nanoid),
-    body: String,
-    authorId: String,
-    discussionId: String,
-    createdAt: Date.now,
-  },
-};
+const user = new Collection({
+  schema: z.object({
+    id: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    password: z.string(),
+    teamId: z.string(),
+    role: z.string(),
+    bio: z.string(),
+    createdAt: z.number(),
+  }),
+});
 
-export const db = factory(models);
+const team = new Collection({
+  schema: z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string(),
+    createdAt: z.number(),
+  }),
+});
 
-export type Model = keyof typeof models;
+const discussion = new Collection({
+  schema: z.object({
+    id: z.string(),
+    title: z.string(),
+    body: z.string(),
+    authorId: z.string(),
+    teamId: z.string(),
+    createdAt: z.number(),
+  }),
+});
+
+const comment = new Collection({
+  schema: z.object({
+    id: z.string(),
+    body: z.string(),
+    authorId: z.string(),
+    discussionId: z.string(),
+    createdAt: z.number(),
+  }),
+});
+
+export const db = { user, team, discussion, comment };
+
+export type Model = keyof typeof db;
 
 const dbFilePath = 'mocked-db.json';
 
@@ -80,7 +89,7 @@ export const storeDb = async (data: string) => {
 export const persistDb = async (model: Model) => {
   if (process.env.NODE_ENV === 'test') return;
   const data = await loadDb();
-  data[model] = db[model].getAll();
+  data[model] = db[model].findMany();
   await storeDb(JSON.stringify(data));
 };
 
@@ -90,7 +99,7 @@ export const initializeDb = async () => {
     const dataEntres = database[key];
     if (dataEntres) {
       dataEntres?.forEach((entry: Record<string, any>) => {
-        model.create(entry);
+        model.create(entry as any);
       });
     }
   });
