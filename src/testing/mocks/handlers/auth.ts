@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import { HttpResponse, http } from 'msw';
+import { nanoid } from 'nanoid';
 
 import { env } from '@/config/env';
 
@@ -32,13 +33,9 @@ export const authHandlers = [
     try {
       const userObject = (await request.json()) as RegisterBody;
 
-      const existingUser = db.user.findFirst({
-        where: {
-          email: {
-            equals: userObject.email,
-          },
-        },
-      });
+      const existingUser = (db.user.findMany() as any[]).find(
+        (u) => u.email === userObject.email,
+      );
 
       if (existingUser) {
         return HttpResponse.json(
@@ -50,21 +47,32 @@ export const authHandlers = [
       let teamId;
       let role;
 
+      const generateId = () => {
+        try {
+          if (
+            typeof globalThis !== 'undefined' &&
+            globalThis.crypto?.randomUUID
+          ) {
+            return globalThis.crypto.randomUUID();
+          }
+        } catch {}
+        return nanoid();
+      };
+
       if (!userObject.teamId) {
-        const team = db.team.create({
+        const team = await db.team.create({
+          id: generateId(),
           name: userObject.teamName ?? `${userObject.firstName} Team`,
-        });
+          description: '',
+          createdAt: Date.now(),
+        } as any);
         await persistDb('team');
-        teamId = team.id;
+        teamId = (team as any).id;
         role = 'ADMIN';
       } else {
-        const existingTeam = db.team.findFirst({
-          where: {
-            id: {
-              equals: userObject.teamId,
-            },
-          },
-        });
+        const existingTeam = (db.team.findMany() as any[]).find(
+          (t) => t.id === userObject.teamId,
+        );
 
         if (!existingTeam) {
           return HttpResponse.json(
@@ -78,12 +86,17 @@ export const authHandlers = [
         role = 'USER';
       }
 
-      db.user.create({
-        ...userObject,
-        role,
+      await db.user.create({
+        id: generateId(),
+        firstName: userObject.firstName,
+        lastName: userObject.lastName,
+        email: userObject.email,
         password: hash(userObject.password),
-        teamId,
-      });
+        teamId: teamId as string,
+        role: role as string,
+        bio: '',
+        createdAt: Date.now(),
+      } as any);
 
       await persistDb('user');
 

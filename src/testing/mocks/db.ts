@@ -45,7 +45,24 @@ const comment = new Collection({
   }),
 });
 
-export const db = { user, team, discussion, comment };
+type AnyCollection = {
+  create: (data?: any) => any;
+  findFirst: (query?: any) => any;
+  findMany: (query?: any) => any[];
+  update: (query: any) => any;
+  delete: (query: any) => any;
+  count: (query?: any) => number;
+};
+
+export const db: Record<
+  'user' | 'team' | 'discussion' | 'comment',
+  AnyCollection
+> = {
+  user: user as unknown as AnyCollection,
+  team: team as unknown as AnyCollection,
+  discussion: discussion as unknown as AnyCollection,
+  comment: comment as unknown as AnyCollection,
+};
 
 export type Model = keyof typeof db;
 
@@ -87,7 +104,8 @@ export const storeDb = async (data: string) => {
 };
 
 export const persistDb = async (model: Model) => {
-  if (process.env.NODE_ENV === 'test') return;
+  const mode = (import.meta as any)?.env?.MODE;
+  if (mode === 'test') return;
   const data = await loadDb();
   data[model] = db[model].findMany();
   await storeDb(JSON.stringify(data));

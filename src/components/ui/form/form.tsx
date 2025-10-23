@@ -190,7 +190,10 @@ const Form = <
   id,
   schema,
 }: FormProps<TFormValues, Schema>) => {
-  const form = useForm({ ...options, resolver: zodResolver(schema) });
+  const form = useForm<TFormValues>({
+    ...(options as UseFormProps<TFormValues>),
+    resolver: zodResolver(schema) as any,
+  });
   return (
     <FormProvider {...form}>
       <form

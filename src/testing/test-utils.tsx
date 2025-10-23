@@ -16,19 +16,26 @@ import {
 import { db } from './mocks/db';
 import { AUTH_COOKIE, authenticate, hash } from './mocks/utils';
 
-export const createUser = async (userProperties?: any) => {
-  const user = generateUser(userProperties) as any;
-  await db.user.create({ ...user, password: hash(user.password) });
+type GeneratedUser = ReturnType<typeof generateUser>;
+export const createUser = async (userProperties?: Partial<GeneratedUser>) => {
+  const user = generateUser(userProperties);
+  await db.user.create({ ...user, password: hash(user.password) } as any);
   return user;
 };
 
-export const createDiscussion = async (discussionProperties?: any) => {
+type GeneratedDiscussion = ReturnType<typeof generateDiscussion>;
+export const createDiscussion = async (
+  discussionProperties?: Partial<GeneratedDiscussion>,
+) => {
   const discussion = generateDiscussion(discussionProperties);
-  const res = await db.discussion.create(discussion);
+  const res = await db.discussion.create(discussion as any);
   return res;
 };
 
-export const loginAsUser = async (user: any) => {
+export const loginAsUser = async (user: {
+  email: string;
+  password: string;
+}) => {
   const authUser = await authenticate(user);
   Cookies.set(AUTH_COOKIE, authUser.jwt);
   return authUser;
@@ -43,7 +50,9 @@ export const waitForLoadingToFinish = () =>
     { timeout: 4000 },
   );
 
-const initializeUser = async (user: any) => {
+const initializeUser = async (
+  user: GeneratedUser | null | undefined,
+) => {
   if (typeof user === 'undefined') {
     const newUser = await createUser();
     return loginAsUser(newUser);
@@ -55,8 +64,18 @@ const initializeUser = async (user: any) => {
 };
 
 export const renderApp = async (
-  ui: any,
-  { user, url = '/', path = '/', ...renderOptions }: Record<string, any> = {},
+  ui: React.ReactElement,
+  {
+    user,
+    url = '/',
+    path = '/',
+    ...renderOptions
+  }: {
+    user?: GeneratedUser | null;
+    url?: string | null;
+    path?: string;
+    [key: string]: unknown;
+  } = {},
 ) => {
   // if you want to render the app unauthenticated then pass "null" as the user
   const initializedUser = await initializeUser(user);

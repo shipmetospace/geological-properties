@@ -1,5 +1,5 @@
 import { Home, PanelLeft, Folder, Users, User2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType, type SVGProps } from 'react';
 import { NavLink, useNavigate, useNavigation } from 'react-router';
 
 import logo from '@/assets/logo.svg';
@@ -22,7 +22,7 @@ import { Link } from '../ui/link';
 type SideNavigationItem = {
   name: string;
   to: string;
-  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+  icon: ComponentType<SVGProps<SVGSVGElement>>;
 };
 
 const Logo = () => {

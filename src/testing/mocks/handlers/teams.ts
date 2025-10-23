@@ -10,7 +10,7 @@ export const teamsHandlers = [
     await networkDelay();
 
     try {
-      const result = db.team.getAll();
+      const result = db.team.findMany();
       return HttpResponse.json({ data: result });
     } catch (error: any) {
       return HttpResponse.json(

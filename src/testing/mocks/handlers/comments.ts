@@ -23,34 +23,19 @@ export const commentsHandlers = [
       const discussionId = url.searchParams.get('discussionId') || '';
       const page = Number(url.searchParams.get('page') || 1);
 
-      const total = db.comment.count({
-        where: {
-          discussionId: {
-            equals: discussionId,
-          },
-        },
-      });
+      const total = (db.comment.findMany() as any[]).filter(
+        (c) => c.discussionId === discussionId,
+      ).length;
 
       const totalPages = Math.ceil(total / 10);
 
-      const comments = db.comment
-        .findMany({
-          where: {
-            discussionId: {
-              equals: discussionId,
-            },
-          },
-          take: 10,
-          skip: 10 * (page - 1),
-        })
+      const comments = (db.comment.findMany() as any[])
+        .filter((c) => c.discussionId === discussionId)
+        .slice(10 * (page - 1), 10 * (page - 1) + 10)
         .map(({ authorId, ...comment }) => {
-          const author = db.user.findFirst({
-            where: {
-              id: {
-                equals: authorId,
-              },
-            },
-          });
+          const author = (db.user.findMany() as any[]).find(
+            (u) => u.id === authorId,
+          );
           return {
             ...comment,
             author: author ? sanitizeUser(author) : {},
@@ -82,9 +67,14 @@ export const commentsHandlers = [
       }
       const data = (await request.json()) as CreateCommentBody;
       const result = db.comment.create({
-        authorId: user?.id,
-        ...data,
-      });
+        id:
+          (globalThis as any)?.crypto?.randomUUID?.() ??
+          Math.random().toString(36).slice(2),
+        body: data.body,
+        discussionId: data.discussionId,
+        authorId: user?.id as string,
+        createdAt: Date.now(),
+      } as any);
       await persistDb('comment');
       return HttpResponse.json(result);
     } catch (error: any) {
@@ -107,17 +97,8 @@ export const commentsHandlers = [
         }
         const commentId = params.commentId as string;
         const result = db.comment.delete({
-          where: {
-            id: {
-              equals: commentId,
-            },
-            ...(user?.role === 'USER' && {
-              authorId: {
-                equals: user.id,
-              },
-            }),
-          },
-        });
+          where: { id: { equals: commentId } },
+        } as any);
         await persistDb('comment');
         return HttpResponse.json(result);
       } catch (error: any) {

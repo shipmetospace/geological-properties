@@ -26,14 +26,8 @@ export const usersHandlers = [
       if (error) {
         return HttpResponse.json({ message: error }, { status: 401 });
       }
-      const result = db.user
-        .findMany({
-          where: {
-            teamId: {
-              equals: user?.teamId,
-            },
-          },
-        })
+      const result = (db.user.findMany() as any[])
+        .filter((u) => u.teamId === user?.teamId)
         .map(sanitizeUser);
 
       return HttpResponse.json({ data: result });
@@ -54,14 +48,14 @@ export const usersHandlers = [
         return HttpResponse.json({ message: error }, { status: 401 });
       }
       const data = (await request.json()) as ProfileBody;
-      const result = db.user.update({
-        where: {
-          id: {
-            equals: user?.id,
-          },
-        },
-        data,
-      });
+      const current = (db.user.findMany() as any[]).find(
+        (u) => u.id === user?.id,
+      );
+      if (!current) {
+        return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+      }
+      Object.assign(current, data);
+      const result = current;
       await persistDb('user');
       return HttpResponse.json(result);
     } catch (error: any) {

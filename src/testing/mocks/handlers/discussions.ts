@@ -29,34 +29,19 @@ export const discussionsHandlers = [
 
       const page = Number(url.searchParams.get('page') || 1);
 
-      const total = db.discussion.count({
-        where: {
-          teamId: {
-            equals: user?.teamId,
-          },
-        },
-      });
+      const total = (db.discussion.findMany() as any[]).filter(
+        (d) => d.teamId === user?.teamId,
+      ).length;
 
       const totalPages = Math.ceil(total / 10);
 
-      const result = db.discussion
-        .findMany({
-          where: {
-            teamId: {
-              equals: user?.teamId,
-            },
-          },
-          take: 10,
-          skip: 10 * (page - 1),
-        })
+      const result = (db.discussion.findMany() as any[])
+        .filter((d) => d.teamId === user?.teamId)
+        .slice(10 * (page - 1), 10 * (page - 1) + 10)
         .map(({ authorId, ...discussion }) => {
-          const author = db.user.findFirst({
-            where: {
-              id: {
-                equals: authorId,
-              },
-            },
-          });
+          const author = (db.user.findMany() as any[]).find(
+            (u) => u.id === authorId,
+          );
           return {
             ...discussion,
             author: author ? sanitizeUser(author) : {},
@@ -89,16 +74,9 @@ export const discussionsHandlers = [
           return HttpResponse.json({ message: error }, { status: 401 });
         }
         const discussionId = params.discussionId as string;
-        const discussion = db.discussion.findFirst({
-          where: {
-            id: {
-              equals: discussionId,
-            },
-            teamId: {
-              equals: user?.teamId,
-            },
-          },
-        });
+        const discussion = (db.discussion.findMany() as any[]).find(
+          (d) => d.id === discussionId && d.teamId === user?.teamId,
+        );
 
         if (!discussion) {
           return HttpResponse.json(
@@ -141,10 +119,13 @@ export const discussionsHandlers = [
       const data = (await request.json()) as DiscussionBody;
       requireAdmin(user);
       const result = db.discussion.create({
-        teamId: user?.teamId,
-        authorId: user?.id,
-        ...data,
-      });
+        id: crypto.randomUUID(),
+        title: data.title,
+        body: data.body,
+        teamId: user?.teamId as string,
+        authorId: user?.id as string,
+        createdAt: Date.now(),
+      } as any);
       await persistDb('discussion');
       return HttpResponse.json(result);
     } catch (error: any) {
@@ -168,17 +149,16 @@ export const discussionsHandlers = [
         const data = (await request.json()) as DiscussionBody;
         const discussionId = params.discussionId as string;
         requireAdmin(user);
+        const existing = (db.discussion.findMany() as any[]).find(
+          (d) => d.id === discussionId && d.teamId === user?.teamId,
+        );
+        if (!existing) {
+          return HttpResponse.json({ message: 'Not found' }, { status: 404 });
+        }
         const result = db.discussion.update({
-          where: {
-            teamId: {
-              equals: user?.teamId,
-            },
-            id: {
-              equals: discussionId,
-            },
-          },
+          where: { id: { equals: discussionId } },
           data,
-        });
+        } as any);
         await persistDb('discussion');
         return HttpResponse.json(result);
       } catch (error: any) {
@@ -203,12 +183,8 @@ export const discussionsHandlers = [
         const discussionId = params.discussionId as string;
         requireAdmin(user);
         const result = db.discussion.delete({
-          where: {
-            id: {
-              equals: discussionId,
-            },
-          },
-        });
+          where: { id: { equals: discussionId } },
+        } as any);
         await persistDb('discussion');
         return HttpResponse.json(result);
       } catch (error: any) {

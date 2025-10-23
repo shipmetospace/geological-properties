@@ -57,7 +57,8 @@ export function authenticate({
   email: string;
   password: string;
 }) {
-  const user = db.user.findMany().find(user => user.email === email);
+  const allUsers = db.user.findMany() as Array<any>;
+  const user = allUsers.find((u) => u.email === email);
 
   if (user?.password === hash(password)) {
     const sanitizedUser = sanitizeUser(user);
@@ -79,7 +80,8 @@ export function requireAuth(cookies: Record<string, string>) {
     }
     const decodedToken = decode(encodedToken) as { id: string };
 
-    const user = db.user.findMany().find(user => user.id === decodedToken.id);
+    const allUsers = db.user.findMany() as Array<any>;
+    const user = allUsers.find((u) => u.id === decodedToken.id);
 
     if (!user) {
       return { error: 'Unauthorized', user: null };
