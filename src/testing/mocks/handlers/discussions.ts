@@ -85,13 +85,9 @@ export const discussionsHandlers = [
           );
         }
 
-        const author = db.user.findFirst({
-          where: {
-            id: {
-              equals: discussion.authorId,
-            },
-          },
-        });
+        const author = (db.user.findMany() as any[]).find(
+          (u) => u.id === (discussion as any).authorId,
+        );
 
         const result = {
           ...discussion,
@@ -149,16 +145,15 @@ export const discussionsHandlers = [
         const data = (await request.json()) as DiscussionBody;
         const discussionId = params.discussionId as string;
         requireAdmin(user);
-        const existing = (db.discussion.findMany() as any[]).find(
-          (d) => d.id === discussionId && d.teamId === user?.teamId,
+        const result = await db.discussion.update(
+          (q: any) => q.where({ id: discussionId, teamId: user?.teamId }),
+          {
+            data(d: any) {
+              d.title = data.title;
+              d.body = data.body;
+            },
+          } as any,
         );
-        if (!existing) {
-          return HttpResponse.json({ message: 'Not found' }, { status: 404 });
-        }
-        const result = db.discussion.update({
-          where: { id: { equals: discussionId } },
-          data,
-        } as any);
         await persistDb('discussion');
         return HttpResponse.json(result);
       } catch (error: any) {
@@ -182,9 +177,9 @@ export const discussionsHandlers = [
         }
         const discussionId = params.discussionId as string;
         requireAdmin(user);
-        const result = db.discussion.delete({
-          where: { id: { equals: discussionId } },
-        } as any);
+        const result = db.discussion.delete((q: any) =>
+          q.where({ id: discussionId, teamId: user?.teamId }),
+        );
         await persistDb('discussion');
         return HttpResponse.json(result);
       } catch (error: any) {

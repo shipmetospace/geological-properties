@@ -96,9 +96,13 @@ export const commentsHandlers = [
           return HttpResponse.json({ message: error }, { status: 401 });
         }
         const commentId = params.commentId as string;
-        const result = db.comment.delete({
-          where: { id: { equals: commentId } },
-        } as any);
+        const result = db.comment.delete((q: any) =>
+          q.where(
+            user?.role === 'USER'
+              ? { id: commentId, authorId: user.id }
+              : { id: commentId },
+          ),
+        );
         await persistDb('comment');
         return HttpResponse.json(result);
       } catch (error: any) {
