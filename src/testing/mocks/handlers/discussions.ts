@@ -145,15 +145,16 @@ export const discussionsHandlers = [
         const data = (await request.json()) as DiscussionBody;
         const discussionId = params.discussionId as string;
         requireAdmin(user);
-        const result = await db.discussion.update(
-          (q: any) => q.where({ id: discussionId, teamId: user?.teamId }),
-          {
-            data(d: any) {
-              d.title = data.title;
-              d.body = data.body;
-            },
-          } as any,
-        );
+        const result = await db.discussion.update({
+          where: {
+            id: { equals: discussionId },
+            teamId: { equals: user?.teamId },
+          },
+          data: {
+            title: data.title,
+            body: data.body,
+          },
+        });
         await persistDb('discussion');
         return HttpResponse.json(result);
       } catch (error: any) {
