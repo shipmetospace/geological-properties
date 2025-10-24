@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
 import logo from '@/assets/logo.svg';
+import signIn from '@/assets/sign-in.svg';
+import signInDark from '@/assets/sign-in-dark.svg';
 import { Head } from '@/components/seo';
 import { Link } from '@/components/ui/link';
 import { paths } from '@/config/paths';
@@ -31,28 +33,38 @@ export const AuthLayout = ({ children, title }: LayoutProps) => {
   return (
     <>
       <Head title={title} />
-      <div className="flex min-h-screen flex-col justify-center bg-gray-50 py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="flex justify-center">
-            <Link
-              className="flex items-center text-white"
-              to={paths.home.getHref()}
-            >
-              <img className="h-24 w-auto" src={logo} alt="Workflow" />
-            </Link>
+      <section className="bg-gray-50 dark:bg-gray-900">
+        <div className="mx-auto grid h-screen max-w-7xl px-4 py-8 lg:grid-cols-12 lg:gap-20 lg:py-16">
+          <div className="w-full place-self-center lg:col-span-6">
+            <div className="mx-auto max-w-lg rounded-lg bg-white p-4 shadow-sm dark:bg-gray-800 sm:p-6">
+              <Link
+                className="mb-4 inline-flex items-center text-xl font-semibold text-gray-900 dark:text-white sm:mb-6 w-full place-self-center hover:text-blue-500"
+                to={paths.home.getHref()}
+              >
+                <img
+                  className="mr-2 h-8 w-auto justify-center"
+                  src={logo}
+                  alt="logo"
+                />
+                Geological Properties
+              </Link>
+              {children}
+            </div>
           </div>
-
-          <h2 className="mt-3 text-center text-3xl font-extrabold text-gray-900">
-            {title}
-          </h2>
-        </div>
-
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10">
-            {children}
+          <div className="mr-auto hidden place-self-center lg:col-span-6 lg:flex">
+            <img
+              className="mx-auto dark:hidden"
+              src={signIn}
+              alt="illustration"
+            />
+            <img
+              className="mx-auto hidden dark:flex"
+              src={signInDark}
+              alt="illustration"
+            />
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 };

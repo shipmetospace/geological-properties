@@ -21,7 +21,9 @@ export const FieldWrapper = (props: FieldWrapperProps) => {
   return (
     <div>
       <Label>
-        {label}
+        <div className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+          {label}
+        </div>
         <div className="mt-1">{children}</div>
       </Label>
       <Error errorMessage={error?.message} />

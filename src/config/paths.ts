@@ -15,6 +15,21 @@ export const paths = {
       getHref: (redirectTo?: string | null | undefined) =>
         `/auth/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
     },
+    forgotPassword: {
+      path: '/auth/forgot-password',
+      getHref: (redirectTo?: string | null | undefined) =>
+        `/auth/forgot-password${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+    },
+    apple: {
+      path: '/auth/apple',
+      getHref: (redirectTo?: string | null | undefined) =>
+        `/auth/apple${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+    },
+    google: {
+      path: '/auth/google',
+      getHref: (redirectTo?: string | null | undefined) =>
+        `/auth/google${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
+    },
   },
 
   app: {
