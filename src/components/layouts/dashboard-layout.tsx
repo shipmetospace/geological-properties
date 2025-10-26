@@ -101,9 +101,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <div className="flex flex-col sm:gap-4 ">
         <DashboardNavigation />
-        <div className="flex flex-row">
+        <div className="flex overflow-hidden bg-gray-50 pt-[62px] dark:bg-gray-900">
           <DashboardSidebar />
-          <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+          <main
+            id="main-content"
+            className="relative h-full w-full overflow-x-scroll bg-gray-50 dark:bg-gray-900 lg:ms-64"
+          >
             {children}
           </main>
         </div>
