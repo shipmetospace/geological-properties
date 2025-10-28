@@ -1,4 +1,4 @@
-import { Breadcrumb } from '@/components/ui/breadcrumb';
+import { Select } from 'flowbite-react';
 import * as React from 'react';
 
 export type ProjectsListProps = {};
@@ -68,11 +68,11 @@ export const ProjectsList = (props: ProjectsListProps) => {
                   placeholder="Search for projects"
                 />
               </div>
-              <select className="block w-full rounded-lg border border-gray-300 bg-gray-50 px-2.5 py-2 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
+              <Select>
                 <option selected>Status</option>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
-              </select>
+              </Select>
               <select className="block w-full rounded-lg border border-gray-300 bg-gray-50 px-2.5 py-2 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500">
                 <option selected>Number of users</option>
                 <option value="1">1</option>

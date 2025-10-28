@@ -1,7 +1,18 @@
-"use client";
-
-import { Avatar, Drawer, Dropdown, Sidebar, theme } from "flowbite-react";
-import { useState } from "react";
+import { useDisclosure } from '@/hooks/use-disclosure';
+import {
+  Avatar,
+  Drawer,
+  DrawerItems,
+  Dropdown,
+  DropdownItem,
+  Sidebar as FlowbiteSidebar,
+  SidebarItems,
+  SidebarItem,
+  SidebarItemGroup,
+  SidebarCollapse,
+  theme,
+} from 'flowbite-react';
+import { useState } from 'react';
 import {
   HiClipboardCheck,
   HiFlag,
@@ -10,17 +21,21 @@ import {
   HiHome,
   HiMenuAlt1,
   HiPresentationChartLine,
-} from "react-icons/hi";
-import { twMerge } from "tailwind-merge";
+} from 'react-icons/hi';
+import { twMerge } from 'tailwind-merge';
 
-export default function SidenavWithProjectsAndTeamSwitch() {
-  const [isOpen, setOpen] = useState(true);
+export type SidebarProps = {
+  isOpen: boolean;
+  setOpen: (isOpen: boolean) => void;
+};
 
+export const Sidebar = (props: SidebarProps) => {
+  const { isOpen, open, close } = useDisclosure(props.isOpen);
   return (
     <>
       <div className="p-4">
         <button
-          onClick={() => setOpen(!isOpen)}
+          onClick={open}
           className="rounded-md p-1 text-xl text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
         >
           <span className="sr-only">Toggle sidenav</span>
@@ -28,17 +43,17 @@ export default function SidenavWithProjectsAndTeamSwitch() {
         </button>
       </div>
       <Drawer
-        onClose={() => setOpen(false)}
+        onClose={close}
         open={isOpen}
         className="max-w-64 border-r px-3 dark:border-gray-800"
       >
-        <Drawer.Items className="h-full">
-          <Sidebar
+        <DrawerItems className="h-full">
+          <FlowbiteSidebar
             aria-label="Sidenav with user profile"
             className="w-full [&>div]:bg-transparent [&>div]:p-0"
           >
-            <Sidebar.Items>
-              <Sidebar.ItemGroup>
+            <SidebarItems>
+              <SidebarItemGroup>
                 <div>
                   <Dropdown
                     inline
@@ -72,18 +87,18 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                       </div>
                     }
                     theme={{
-                      arrowIcon: "hidden",
+                      arrowIcon: 'hidden',
                       inlineWrapper: twMerge(
                         theme.dropdown.inlineWrapper,
-                        "m-1 w-[96%] rounded-lg p-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700",
+                        'm-1 w-[96%] rounded-lg p-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700',
                       ),
-                      content: twMerge(theme.dropdown.content, "py-0"),
+                      content: twMerge(theme.dropdown.content, 'py-0'),
                       floating: {
-                        base: twMerge(theme.dropdown.floating.base, "w-60"),
+                        base: twMerge(theme.dropdown.floating.base, 'w-60'),
                       },
                     }}
                   >
-                    <Dropdown.Item className="py-3">
+                    <DropdownItem className="py-3">
                       <Avatar
                         img="https://themesberg.com/docs/spaces/assets/brand/themesberg.svg"
                         rounded
@@ -97,36 +112,36 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                           Personal plan
                         </div>
                       </Avatar>
-                    </Dropdown.Item>
+                    </DropdownItem>
                   </Dropdown>
                 </div>
-                <Sidebar.Item href="#" icon={HiHome}>
+                <SidebarItem href="#" icon={HiHome}>
                   Home
-                </Sidebar.Item>
-                <Sidebar.Collapse icon={HiClipboardCheck} label="My Tasks">
-                  <Sidebar.Item href="#">To do</Sidebar.Item>
-                  <Sidebar.Item href="#">In progress</Sidebar.Item>
-                  <Sidebar.Item href="#">Completed</Sidebar.Item>
-                </Sidebar.Collapse>
-                <Sidebar.Item
+                </SidebarItem>
+                <SidebarCollapse icon={HiClipboardCheck} label="My Tasks">
+                  <SidebarItem href="#">To do</SidebarItem>
+                  <SidebarItem href="#">In progress</SidebarItem>
+                  <SidebarItem href="#">Completed</SidebarItem>
+                </SidebarCollapse>
+                <SidebarItem
                   href="#"
                   icon={HiFolderDownload}
-                  label={6}
+                  label="6"
                   className="[&_span]:rounded-full"
                 >
                   Inbox
-                </Sidebar.Item>
-                <Sidebar.Item href="#" icon={HiPresentationChartLine}>
+                </SidebarItem>
+                <SidebarItem href="#" icon={HiPresentationChartLine}>
                   Reporting
-                </Sidebar.Item>
-                <Sidebar.Item href="#" icon={HiFolder}>
+                </SidebarItem>
+                <SidebarItem href="#" icon={HiFolder}>
                   Portfolios
-                </Sidebar.Item>
-                <Sidebar.Item href="#" icon={HiFlag}>
+                </SidebarItem>
+                <SidebarItem href="#" icon={HiFlag}>
                   Goals
-                </Sidebar.Item>
-              </Sidebar.ItemGroup>
-              <Sidebar.ItemGroup>
+                </SidebarItem>
+              </SidebarItemGroup>
+              <SidebarItemGroup>
                 <div className="mb-4 pl-2 text-sm text-gray-500 dark:text-gray-400">
                   <h3>Bergside projects</h3>
                 </div>
@@ -190,7 +205,7 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                     </a>
                   </li>
                 </ul>
-              </Sidebar.ItemGroup>
+              </SidebarItemGroup>
               <div className="absolute bottom-0 left-0 z-20 w-full justify-center bg-white p-4 dark:bg-gray-800">
                 <ul className="mb-4 space-y-2 border-b border-gray-200 pb-4 pl-2 dark:border-gray-700">
                   <li>
@@ -265,18 +280,18 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                     </div>
                   }
                   theme={{
-                    arrowIcon: "hidden",
+                    arrowIcon: 'hidden',
                     inlineWrapper: twMerge(
                       theme.dropdown.inlineWrapper,
-                      "w-full rounded-lg p-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700",
+                      'w-full rounded-lg p-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700',
                     ),
-                    content: twMerge(theme.dropdown.content, "py-0"),
+                    content: twMerge(theme.dropdown.content, 'py-0'),
                     floating: {
-                      base: twMerge(theme.dropdown.floating.base, "w-60"),
+                      base: twMerge(theme.dropdown.floating.base, 'w-60'),
                     },
                   }}
                 >
-                  <Dropdown.Item className="border-b border-gray-100 py-3 dark:border-gray-600">
+                  <DropdownItem className="border-b border-gray-100 py-3 dark:border-gray-600">
                     <Avatar
                       img="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/michael-gouch.png"
                       rounded
@@ -290,8 +305,8 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                         michael@flowbite.com
                       </div>
                     </Avatar>
-                  </Dropdown.Item>
-                  <Dropdown.Item className="py-3">
+                  </DropdownItem>
+                  <DropdownItem className="py-3">
                     <Avatar
                       img="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/roberta-casas.png"
                       rounded
@@ -305,7 +320,7 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                         roberta@flowbite.com
                       </div>
                     </Avatar>
-                  </Dropdown.Item>
+                  </DropdownItem>
                 </Dropdown>
                 <a
                   href="#"
@@ -323,10 +338,10 @@ export default function SidenavWithProjectsAndTeamSwitch() {
                   <span className="ml-2">Invite team members</span>
                 </a>
               </div>
-            </Sidebar.Items>
-          </Sidebar>
-        </Drawer.Items>
+            </SidebarItems>
+          </FlowbiteSidebar>
+        </DrawerItems>
       </Drawer>
     </>
   );
-}
+};

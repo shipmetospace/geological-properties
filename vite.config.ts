@@ -5,10 +5,11 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
+import flowbiteReact from "flowbite-react/plugin/vite";
 
 export default defineConfig({
   base: './',
-  plugins: [react(), viteTsconfigPaths(), tailwindcss()],
+  plugins: [react(), viteTsconfigPaths(), tailwindcss(), flowbiteReact()],
   server: {
     port: 3000,
   },
