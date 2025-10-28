@@ -10,11 +10,8 @@ type ContentLayoutProps = {
 export const ContentLayout = ({ children, title }: ContentLayoutProps) => {
   return (
     <>
-      <div className="mb-4">
+      <div className="flex flex-col m-4 gap-4">
         <Breadcrumb />
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-          {title}
-        </h1>
       </div>
       {children}
     </>

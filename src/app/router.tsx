@@ -9,7 +9,7 @@ import { ProtectedRoute } from '@/lib/auth';
 import {
   default as AppRoot,
   ErrorBoundary as AppRootErrorBoundary,
-} from './routes/app/root';
+} from './routes/dashboard/root';
 
 const convert = (queryClient: QueryClient) => (m: any) => {
   const { clientLoader, clientAction, default: Component, ...rest } = m;
@@ -52,34 +52,38 @@ export const createAppRouter = (queryClient: QueryClient) =>
         {
           path: paths.app.discussions.path,
           lazy: () =>
-            import('./routes/app/discussions/discussions').then(
+            import('./routes/dashboard/discussions/discussions').then(
               convert(queryClient),
             ),
         },
         {
           path: paths.app.discussion.path,
           lazy: () =>
-            import('./routes/app/discussions/discussion').then(
+            import('./routes/dashboard/discussions/discussion').then(
               convert(queryClient),
             ),
         },
         {
           path: paths.app.users.path,
-          lazy: () => import('./routes/app/users').then(convert(queryClient)),
+          lazy: () =>
+            import('./routes/dashboard/users').then(convert(queryClient)),
         },
         {
           path: paths.app.profile.path,
-          lazy: () => import('./routes/app/profile').then(convert(queryClient)),
+          lazy: () =>
+            import('./routes/dashboard/profile').then(convert(queryClient)),
         },
         {
           path: paths.app.dashboard.path,
           lazy: () =>
-            import('./routes/app/dashboard').then(convert(queryClient)),
+            import('./routes/dashboard/dashboard').then(convert(queryClient)),
         },
         {
           path: paths.app.projects.path,
           lazy: () =>
-            import('./routes/app/projects/projects').then(convert(queryClient)),
+            import('./routes/dashboard/projects/projects').then(
+              convert(queryClient),
+            ),
         },
       ],
     },

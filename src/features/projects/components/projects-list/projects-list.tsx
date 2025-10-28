@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
+import * as React from 'react';
 
 export type ProjectsListProps = {};
 
@@ -9,7 +9,6 @@ export const ProjectsList = (props: ProjectsListProps) => {
       <div className="grid grid-cols-12 gap-4 bg-white dark:bg-gray-900">
         <div className="col-span-full mx-4 mt-4 items-center justify-between sm:flex">
           <div className="mb-4 sm:mb-0">
-            <Breadcrumb />
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               All Projects
             </h1>

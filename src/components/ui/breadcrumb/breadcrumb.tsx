@@ -65,10 +65,10 @@ export const Breadcrumb = ({ className = '' }: BreadcrumbProps) => {
     const breadcrumbs: BreadcrumbItem[] = [];
 
     // Always start with Home
-    breadcrumbs.push({
-      label: 'Dashboard',
-      href: paths.app.dashboard.getHref(),
-    });
+    // breadcrumbs.push({
+    //   label: 'Dashboard',
+    //   href: paths.app.dashboard.getHref(),
+    // });
 
     // Build breadcrumbs based on path segments
     let currentPath = '';
@@ -142,7 +142,7 @@ export const Breadcrumb = ({ className = '' }: BreadcrumbProps) => {
   const displayBreadcrumbs = getDisplayBreadcrumbs();
 
   return (
-    <nav className={`m-4 flex ${className}`} aria-label="Breadcrumb">
+    <nav className={`flex ${className}`} aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
         {displayBreadcrumbs.map((item, index) => (
           <li key={item.href} className="inline-flex items-center">
